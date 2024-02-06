@@ -1,91 +1,185 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Video Platform</title>
-    <link rel="stylesheet" href="styles.css"> <!-- External CSS for styling -->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Advanced Chatbot</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f2f2f2;
+  }
+  #chat-container {
+    width: 400px;
+    max-width: 90%;
+    height: 500px;
+    background-color: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+  }
+  #chatbox {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+  }
+  .message {
+    margin-bottom: 10px;
+    max-width: 70%;
+    word-wrap: break-word;
+    padding: 10px;
+    border-radius: 8px;
+  }
+  .user-message {
+    align-self: flex-end;
+    background-color: #007bff;
+    color: #fff;
+    text-align: right;
+  }
+  .bot-message {
+    align-self: flex-start;
+    background-color: #f2f2f2;
+  }
+  #input-container {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border-top: 1px solid #ccc;
+  }
+  #input {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-right: 10px;
+    font-size: 16px;
+    outline: none;
+  }
+  #send-btn {
+    padding: 8px 20px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  #send-btn:hover {
+    background-color: #0056b3;
+  }
+</style>
 </head>
 <body>
-    <header>
-        <div id="header-content">
-            <div id="logo">My Video Platform</div>
-            <div id="user-auth">
-                <a href="login.html">Login</a>
-                <a href="signup.html">Sign Up</a>
-            </div>
-        </div>
-    </header>
+<div id="chat-container">
+  <div id="chatbox"></div>
+  <div id="input-container">
+    <input type="text" id="input" aria-label="Type your message" placeholder="Type your message...">
+    <button id="send-btn" aria-label="Send">Send</button>
+  </div>
+</div>
+<script>
+  // Define a more sophisticated set of responses with emotions
+  const responses = {
+    "hi|hello|hey": {
+      positive: ["Hello!", "Hi there!", "Hey! How can I assist you?"],
+      neutral: ["Hello!", "Hi there!"],
+      negative: ["Ugh, another greeting...", "What do you want?", "Hello, I guess."]
+    },
+    "how are you\\?": {
+      positive: ["I'm doing well, thank you!", "Feeling great, thanks for asking!", "All good here!"],
+      neutral: ["I'm fine, thank you.", "Doing okay, thanks."],
+      negative: ["I've had better days...", "Not feeling great, but I'll manage.", "Could be better."]
+    },
+    "bye|goodbye": {
+      positive: ["Goodbye!", "See you later!", "Take care!"],
+      neutral: ["Goodbye.", "Bye."],
+      negative: ["Oh, leaving already?", "Good riddance!", "Whatever, goodbye."]
+    },
+    "what is your name\\?": ["I'm just a simple chatbot!", "I'm your friendly chatbot assistant!"],
+    "what time is it\\?": ["It's currently " + new Date().toLocaleTimeString() + ".", "The time is " + new Date().toLocaleTimeString() + ".", "It is " + new Date().toLocaleTimeString() + "."],
+    "tell me a joke": ["Why don't scientists trust atoms? Because they make up everything!", "I'm reading a book on anti-gravity. It's impossible to put down!", "What do you call fake spaghetti? An impasta!"],
+    "how's the weather": ["The weather is sunny today.", "It's raining outside.", "Expect partly cloudy skies today."],
+    "thanks|thank you": ["You're welcome!", "No problem!", "Anytime!"],
+    "what are your interests\\?": ["I enjoy helping users, answering questions, and learning new things!", "I'm interested in technology, chatting with users, and making friends!"],
+    "what can you do\\?": ["I can provide information, answer questions, tell jokes, and even do basic calculations!", "I'm here to assist you with anything you need! Just ask!"],
+    "calculate ([0-9+\\-*/(). ]+)": (matches) => {
+      try {
+        const result = eval(matches[1]);
+        return `The result is ${result}.`;
+      } catch (error) {
+        return "Sorry, I couldn't calculate that.";
+      }
+    }
+    // Add more responses here...
+  };
 
-    <main>
-        <section id="video-section">
-            <!-- Video Player -->
-            <div id="video-player">
-                <video id="main-video" controls>
-                    <source src="sample.mp4" type="video/mp4">
-                    Your browser does not support the video tag.
-                </video>
-            </div>
+  // Function to generate a random response with emotion
+  function getRandomResponseWithEmotion(emotion) {
+    const responseSet = responses[emotion];
+    if (!responseSet) return "I'm sorry, I don't understand that.";
+    if (Array.isArray(responseSet)) return getRandomResponse(responseSet);
+    return getRandomResponse(responseSet[emotion]);
+  }
 
-            <!-- Video Upload Form (Visible to Logged-in Users) -->
-            <div id="upload-form">
-                <h2>Upload Video</h2>
-                <form id="video-upload-form" action="upload.php" method="post" enctype="multipart/form-data">
-                    <input type="file" name="video-file" accept="video/mp4">
-                    <input type="text" name="title" placeholder="Title">
-                    <textarea name="description" placeholder="Description"></textarea>
-                    <button type="submit">Upload</button>
-                </form>
-            </div>
-        </section>
+  // Function to generate bot response with emotion based on user input
+  function getBotResponseWithEmotion(message) {
+    message = message.toLowerCase().trim();
+    if (message.includes("thank")) return getRandomResponseWithEmotion("positive");
+    if (message.includes("bye")) return getRandomResponseWithEmotion("negative");
+    return getRandomResponseWithEmotion("neutral");
+  }
 
-        <!-- Display Real Videos (Fetched from Database) -->
-        <section id="real-videos">
-            <h2>Real Videos</h2>
-            <div class="video-list">
-                <!-- Video Thumbnails and Information -->
-                <!-- PHP or other server-side scripting to fetch and display videos dynamically -->
-                <div class="video-thumbnail">
-                    <video class="thumbnail" controls>
-                        <source src="video1.mp4" type="video/mp4">
-                        Your browser does not support the video tag.
-                    </video>
-                    <div class="video-info">
-                        <h3>Title of Video 1</h3>
-                        <p>Description of Video 1</p>
-                    </div>
-                </div>
-                <div class="video-thumbnail">
-                    <video class="thumbnail" controls>
-                        <source src="video2.mp4" type="video/mp4">
-                        Your browser does not support the video tag.
-                    </video>
-                    <div class="video-info">
-                        <h3>Title of Video 2</h3>
-                        <p>Description of Video 2</p>
-                    </div>
-                </div>
-                <!-- More videos go here -->
-            </div>
-        </section>
-    </main>
+  // Function to generate a random response from an array
+  function getRandomResponse(array) {
+    return array[Math.floor(Math.random() * array.length)];
+  }
 
-    <footer>
-        <div id="footer-content">
-            <nav>
-                <ul>
-                    <li><a href="#">About</a></li>
-                    <li><a href="#">Contact</a></li>
-                    <li><a href="#">Privacy Policy</a></li>
-                    <li><a href="#">Terms of Service</a></li>
-                </ul>
-            </nav>
-            <div id="copyright">
-                &copy; 2024 My Video Platform
-            </div>
-        </div>
-    </footer>
+  // Function to append user and bot messages to chatbox
+  function appendMessage(sender, message, isUser) {
+    const chatbox = document.getElementById("chatbox");
+    const msgElement = document.createElement("div");
+    msgElement.textContent = message;
+    msgElement.classList.add("message");
+    if (isUser) {
+      msgElement.classList.add("user-message");
+    } else {
+      msgElement.classList.add("bot-message");
+    }
+    chatbox.appendChild(msgElement);
+    chatbox.scrollTop = chatbox.scrollHeight;
+  }
 
-    <script src="scripts.js"></script> <!-- External JavaScript for interactivity -->
+  // Function to handle user input
+  function handleInput() {
+    const inputField = document.getElementById("input");
+    const message = inputField.value.trim();
+    if (message !== "") {
+      appendMessage("You", message, true);
+      const botResponse = getBotResponseWithEmotion(message);
+      appendMessage("Bot", botResponse, false);
+      inputField.value = "";
+    }
+  }
+
+  // Event listener for send button
+  document.getElementById("send-btn").addEventListener("click", handleInput);
+
+  // Event listener for input field (pressing Enter)
+  document.getElementById("input").addEventListener("keypress", function(event) {
+    if (event.key === "Enter") {
+      handleInput();
+    }
+  });
+</script>
 </body>
 </html>
