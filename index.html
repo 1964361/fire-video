@@ -5,7 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Advanced Chatbot</title>
 <style>
-  font-family: Arial, sans-serif;
+  body {
+    font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
     display: flex;
@@ -88,7 +89,6 @@
 </div>
 <script>
   let responses = {
-    let responses = {
     "hi|hello|hey": ["Hello!", "Hi there!", "Hey! How can I assist you?"],
     "how are you?": ["I'm doing well, thank you!", "Feeling great, thanks for asking!", "All good here!"],
     "bye|goodbye": ["Goodbye!", "See you later!", "Take care!"],
@@ -260,6 +260,8 @@
     })
     .catch(error => console.error(error));
   }
+
+  // Call updateGist function here if needed
 </script>
 </body>
 </html>
