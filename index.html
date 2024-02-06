@@ -100,6 +100,8 @@
     "what are your interests?": ["I enjoy helping users, answering questions, and learning new things!", "I'm interested in technology, chatting with users, and making friends!"],
     "what can you do?": ["I can provide information, answer questions, tell jokes, and even do basic calculations!", "I'm here to assist you with anything you need! Just ask!"],
     "calculate ([0-9+\\-*/(). ]+)": (matches) => {
+    "solve ([0-9+\\-*/(). ]+)": (matches) => {
+    "([0-9+\\-*/(). ]+)": (matches) => {
       try {
         const result = eval(matches[1]);
         return `The result is ${result}.`;
