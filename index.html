@@ -98,16 +98,57 @@
     "tell me a joke": ["Why don't scientists trust atoms? Because they make up everything!", "I'm reading a book on anti-gravity. It's impossible to put down!", "What do you call fake spaghetti? An impasta!"],
     "how's the weather": ["The weather is sunny today.", "It's raining outside.", "Expect partly cloudy skies today."],
     "thanks|thank you": ["You're welcome!", "No problem!", "Anytime!"],
-    "what are your interests\\?": ["I enjoy helping users, answering questions, and learning new things!", "I'm interested in technology, chatting with users, and making friends!"],
+    "what are your interests?": ["I enjoy helping users, answering questions, and learning new things!", "I'm interested in technology, chatting with users, and making friends!"],
     "what can you do?": ["I can provide information, answer questions, tell jokes, and even do basic calculations!", "I'm here to assist you with anything you need! Just ask!"],
-    "calculate ([0-9+*/(). ]+)": (matches) => {
+    "calculate ([0-9+-*/(). ]+)": (matches) => {
       try {
         const result = eval(matches[1]);
         return `The result is ${result}.`;
       } catch (error) {
         return "Sorry, I couldn't calculate that.";
       }
-    }
+    },
+    "who created you?": ["I was created by a team of developers.", "My creators are skilled programmers.", "My makers are humans, just like you!"],
+    "do you have any siblings?": ["No, I'm an only bot!", "I'm the only one of my kind.", "I don't have any siblings, unfortunately."],
+    "what's your favorite color?": ["I don't have a favorite color, but I like all of them!", "As a bot, I don't have the ability to see colors, but I appreciate their existence!", "I'm impartial to colors, but I find them fascinating!"],
+    "what's the capital of ([a-zA-Z ]+)?": (matches) => {
+      const countries = {
+        "united states": "Washington, D.C.",
+        "united kingdom": "London",
+        "france": "Paris",
+        "germany": "Berlin",
+        "isreal": "Jeruselum",
+        // Add more countries and capitals here...
+      };
+      const country = matches[1].toLowerCase();
+      return countries[country] ? `The capital of ${matches[1]} is ${countries[country]}.` : `Sorry, I don't know the capital of ${matches[1]}.`;
+    },
+    "what's the population of ([a-zA-Z ]+)\\?": (matches) => {
+      const countries = {
+        "united states": "331 million",
+        "united kingdom": "68 million",
+        "france": "67 million",
+        "germany": "83 million",
+        // Add more countries and populations here...
+      };
+      const country = matches[1].toLowerCase();
+      return countries[country] ? `The population of ${matches[1]} is approximately ${countries[country]}.` : `Sorry, I don't know the population of ${matches[1]}.`;
+    },
+    "what's ([0-9]+) plus ([0-9]+)\\?": (matches) => {
+      const num1 = parseInt(matches[1]);
+      const num2 = parseInt(matches[2]);
+      return `${num1} plus ${num2} equals ${num1 + num2}.`;
+    },
+    "what's ([0-9]+) minus ([0-9]+)\\?": (matches) => {
+      const num1 = parseInt(matches[1]);
+      const num2 = parseInt(matches[2]);
+      return `${num1} minus ${num2} equals ${num1 - num2}.`;
+    },
+    "what's the meaning of life\\?": ["The meaning of life is subjective and varies from person to person!", "That's a deep question! Some say it's 42...", "The meaning of life is a mystery that each individual must explore for themselves!"],
+    "what's the best programming language\\?": ["The best programming language depends on the task at hand and personal preference!", "There's no definitive answer to that question! Each language has its strengths and weaknesses.", "The best programming language is the one you enjoy using and that helps you accomplish your goals!"],
+    "tell me a fun fact": ["Did you know that honey never spoils? Archaeologists have found pots of honey in ancient Egyptian tombs that are over 3000 years old and still perfectly edible!", "Octopuses have three hearts and blue blood!", "The shortest war in history was between Britain and Zanzibar on August 27, 1896. Zanzibar surrendered after 38 minutes!"],
+    "what's your favorite food\\?": ["As a bot, I don't eat, but I think pizza sounds delicious!", "I don't have taste buds, but I've heard good things about sushi!", "My favorite food is data packets! Just kidding, I don't eat!"],
+    "what's the tallest mountain\\?": ["Mount Everest is the tallest mountain above sea level, reaching a height of 29,032 feet (8,849 meters).", "The tallest mountain on Earth is Mount Everest in the Himalayas.", "Mount Everest, standing at 29,032 feet (8,849 meters) above sea level, holds the title of the tallest mountain on Earth!"]
     // Add more responses here...
   };
 
@@ -121,7 +162,11 @@
     message = message.toLowerCase().trim();
     for (const [pattern, responsesArray] of Object.entries(responses)) {
       if (new RegExp(pattern, 'i').test(message)) { // 'i' flag for case-insensitive matching
-        return getRandomResponse(responsesArray);
+        if (typeof responsesArray === 'function') {
+          return responsesArray(message.match(new RegExp(pattern, 'i')));
+        } else {
+          return getRandomResponse(responsesArray);
+        }
       }
     }
     return "I'm sorry, I don't understand that.";
