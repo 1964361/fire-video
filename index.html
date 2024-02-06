@@ -134,6 +134,7 @@
   // Function to generate bot response with emotion based on user input
   function getBotResponseWithEmotion(message) {
     message = message.toLowerCase().trim();
+    if (message.match(/\b(hi|hello|hey)\b/)) return getRandomResponseWithEmotion("positive");
     if (message.includes("thank")) return getRandomResponseWithEmotion("positive");
     if (message.includes("bye")) return getRandomResponseWithEmotion("negative");
     return getRandomResponseWithEmotion("neutral");
