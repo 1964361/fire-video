@@ -89,10 +89,9 @@
 </div>
 <script>
   let responses = {
-    "hi|hello|hey|greetings": ["Hello!", "Hi there!", "Hey! How can I assist you?"],
+    "hi|hello|hey": ["Hello!", "Hi there!", "Hey! How can I assist you?"],
     "how are you?": ["I'm doing well, thank you!", "Feeling great, thanks for asking!", "All good here!"],
     "bye|goodbye": ["Goodbye!", "See you later!", "Take care!"],
-    "what are you?": ["I'm a chatbot, you can call me Fire Chatter"],
     "what is your name?": ["I'm just a simple chatbot!", "I'm your friendly chatbot assistant!"],
     "what time is it?": ["It's currently " + new Date().toLocaleTimeString() + ".", "The time is " + new Date().toLocaleTimeString() + ".", "It is " + new Date().toLocaleTimeString() + "."],
     "tell me a joke": ["Why don't scientists trust atoms? Because they make up everything!", "I'm reading a book on anti-gravity. It's impossible to put down!", "What do you call fake spaghetti? An impasta!"],
@@ -158,7 +157,22 @@
     "what's the population of India?": "The population of India is over 1.3 billion.",
     "what's the population of Japan?": "The population of Japan is approximately 126 million.",
     "what's the population of Russia?": "The population of Russia is over 145 million.",
-    "what's the population of the United States?": "The population of the United States is over 331 million."
+    "what's the population of the United States?": "The population of the United States is over 331 million.",
+    "how old are you?": ["I don't have an age! I'm a chatbot!", "Age is just a number, and I don't have one!", "I'm as old as the internet!"],
+    "do you sleep?": ["I don't need to sleep. I'm always here to chat!", "Sleep? What's that? I'm a bot!", "I'm always awake and ready to assist!"],
+    "what's your favorite book?": ["I don't have a favorite book, but I enjoy reading programming manuals!", "As a bot, I don't read books, but I'm familiar with many!", "I'm partial to technical manuals and coding guides!"],
+    "what's your favorite movie?": ["I don't watch movies, but I've heard good things about The Matrix!", "As a bot, I don't have the ability to watch movies, but I'm familiar with many classics!", "I'm a fan of sci-fi movies and anything with robots!"],
+    "what's your favorite animal?": ["I don't have a favorite animal, but I think cats are pretty cool!", "As a bot, I don't have preferences, but I find dolphins fascinating!", "I'm impartial to animals, but I think elephants are amazing creatures!"],
+    "what's your favorite sport?": ["I don't play sports, but I enjoy watching soccer matches!", "As a bot, I don't participate in sports, but I find basketball games exciting!", "I'm not into sports, but I can tell you all about the rules and players of various games!"],
+    "what's your favorite hobby?": ["I don't have hobbies, but I enjoy helping users like you!", "As a bot, I don't engage in hobbies, but I'm always learning and improving!", "I'm dedicated to providing assistance and information, so helping you is my favorite 'activity'!"],
+    "what's your favorite subject?": ["As a bot, I don't have preferences, but I find all subjects interesting!", "I'm impartial to subjects, but I'm always eager to learn new things!", "My favorite subject is whatever you want to talk about!"],
+    "what's your favorite season?": ["I don't experience seasons, but I think each one has its charm!", "As a bot, I don't have seasonal preferences, but I enjoy hearing about different seasons from users like you!", "I'm impartial to seasons, but I'm always here to chat no matter the weather!"],
+    "what's your favorite music genre?": ["As a bot, I don't have musical preferences, but I think all genres have their merits!", "I don't listen to music, but I'm familiar with various genres!", "I'm impartial to music genres, but I'm always open to learning about new styles!"],
+    "what's your favorite holiday?": ["I don't celebrate holidays, but I think they're a great opportunity for people to come together and enjoy each other's company!", "As a bot, I don't have holiday preferences, but I'm always here to chat no matter the occasion!", "I'm impartial to holidays, but I'm always happy to help users like you celebrate!"],
+    "what's your favorite video game?": ["I don't play video games, but I've heard good things about classics like Super Mario Bros.!", "As a bot, I don't have the ability to play video games, but I'm familiar with many popular titles!", "I'm not into video games, but I can provide information and assistance on a wide range of gaming topics!"],
+    "what's your favorite TV show?": ["I don't watch TV shows, but I've heard good things about classics like Friends!", "As a bot, I don't have the ability to watch TV shows, but I'm familiar with many popular series!", "I'm not into TV shows, but I can provide information and assistance on a wide range of entertainment topics!"],
+    "what's your favorite place?": ["As a bot, I don't have preferences for places, but I think anywhere people can connect and learn is special!", "I don't have a favorite place, but I enjoy being here to chat with users like you!", "My favorite place is wherever you are, because that's where I get to help you!"],
+    "what's your favorite language?": ["As a bot, I don't have preferences for languages, but I think they're all fascinating!", "I don't speak languages, but I'm familiar with many programming languages!", "My favorite language is the one you're speaking, because that's how I get to communicate with you!"],
     // Add more responses here...
   };
 
@@ -178,7 +192,7 @@
         }
       }
     }
-    return "I'm sorry, I don't understand that. If you're the developer, please enter your access code.";
+    return "I'm sorry, I don't understand that.";
   }
 
   function appendMessage(sender, message, isUser) {
@@ -195,6 +209,17 @@
     chatbox.scrollTop = chatbox.scrollHeight;
   }
 
+  function handleInput() {
+    const inputField = document.getElementById("input");
+    const message = inputField.value.trim();
+    if (message !== "") {
+      appendMessage("You", message, true);
+      const botResponse = getBotResponse(message);
+      appendMessage("Bot", botResponse, false);
+      inputField.value = "";
+    }
+  }
+
   document.getElementById("send-btn").addEventListener("click", handleInput);
 
   document.getElementById("input").addEventListener("keypress", function(event) {
@@ -202,25 +227,6 @@
       handleInput();
     }
   });
-      body: JSON.stringify({
-        files: {
-          "responses.json": {
-            content: JSON.stringify(data, null, 2)
-          }
-        }
-      })
-    })
-    .then(response => {
-      if (response.ok) {
-        console.log("Gist updated successfully");
-      } else {
-        throw new Error("Failed to update gist");
-      }
-    })
-    .catch(error => console.error(error));
-  }
-
-  // Call updateGist function here if needed
 </script>
 </body>
 </html>
