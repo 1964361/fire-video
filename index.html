@@ -88,12 +88,12 @@
   </div>
 </div>
 <script>
-  // Define a more sophisticated set of responses
-  const responses = {
+  // Define responses object
+  let responses = {
     "hi|hello|hey": ["Hello!", "Hi there!", "Hey! How can I assist you?"],
     "how are you?": ["I'm doing well, thank you!", "Feeling great, thanks for asking!", "All good here!"],
     "bye|goodbye": ["Goodbye!", "See you later!", "Take care!"],
-    "what is your name?": ["My name is Fire Chatter", "I'm am Fire Chatter your friendly chatbot assistant!"],
+    "what is your name?": ["I'm just a simple chatbot!", "I'm your friendly chatbot assistant!"],
     "what time is it?": ["It's currently " + new Date().toLocaleTimeString() + ".", "The time is " + new Date().toLocaleTimeString() + ".", "It is " + new Date().toLocaleTimeString() + "."],
     "tell me a joke": ["Why don't scientists trust atoms? Because they make up everything!", "I'm reading a book on anti-gravity. It's impossible to put down!", "What do you call fake spaghetti? An impasta!"],
     "how's the weather": ["The weather is sunny today.", "It's raining outside.", "Expect partly cloudy skies today."],
@@ -179,7 +179,7 @@
         }
       }
     }
-    return "I'm sorry, I don't understand that.";
+    return "I'm sorry, I don't understand that. If you're the developer, please enter your access code.";
   }
 
   // Function to append user and bot messages to chatbox
@@ -204,7 +204,29 @@
     if (message !== "") {
       appendMessage("You", message, true);
       const botResponse = getBotResponse(message);
-      appendMessage("Bot", botResponse, false);
+      if (botResponse.startsWith("I'm sorry, I don't understand that. If you're the developer, please enter your access code.")) {
+        // Prompt for developer code
+        const accessCode = prompt("Developer access code:");
+        if (accessCode === "Nerd2022") {
+          // Developer entered correct code
+          const newResponse = prompt("Enter the response for this input:");
+          if (newResponse.trim() !== "") {
+            // Add new response to responses object
+            const newPattern = message.replace(/\?/g, "\\?");
+            responses[newPattern] = [newResponse];
+            localStorage.setItem("responses", JSON.stringify(responses));
+            appendMessage("Bot", "Response added successfully!", false);
+          } else {
+            appendMessage("Bot", "Empty response, operation aborted.", false);
+          }
+        } else {
+          // Developer entered incorrect code
+          appendMessage("Bot", "Access denied. Continuing chat...", false);
+        }
+      } else {
+        // Regular bot response
+        appendMessage("Bot", botResponse, false);
+      }
       inputField.value = "";
     }
   }
@@ -218,6 +240,12 @@
       handleInput();
     }
   });
+
+  // Load responses from local storage
+  const storedResponses = localStorage.getItem("responses");
+  if (storedResponses) {
+    responses = JSON.parse(storedResponses);
+  }
 </script>
 </body>
 </html>
