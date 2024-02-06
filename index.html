@@ -195,38 +195,6 @@
     chatbox.scrollTop = chatbox.scrollHeight;
   }
 
-  function handleInput() {
-    const inputField = document.getElementById("input");
-    const message = inputField.value.trim();
-    if (message !== "") {
-      appendMessage("You", message, true);
-      const botResponse = getBotResponse(message);
-      if (botResponse.startsWith("I'm sorry, I don't understand that. If you're the developer, please enter your access code.")) {
-        const accessCode = prompt("Developer access code:");
-        if (accessCode === "Nerd2022") {
-          const newResponse = prompt("Enter the response for this input:");
-          if (newResponse !== null && newResponse.trim() !== "") {
-            try {
-              const newPattern = message.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-              responses[newPattern] = [newResponse];
-              updateGist(responses); // Update the gist with the modified responses
-              appendMessage("Bot", "Response added successfully!", false);
-            } catch (error) {
-              appendMessage("Bot", "Error occurred while adding response.", false);
-            }
-          } else {
-            appendMessage("Bot", "Empty response, operation aborted.", false);
-          }
-        } else {
-          appendMessage("Bot", "Access denied. Continuing chat...", false);
-        }
-      } else {
-        appendMessage("Bot", botResponse, false);
-      }
-      inputField.value = "";
-    }
-  }
-
   document.getElementById("send-btn").addEventListener("click", handleInput);
 
   document.getElementById("input").addEventListener("keypress", function(event) {
@@ -234,16 +202,6 @@
       handleInput();
     }
   });
-
-  function updateGist(data) {
-    const accessToken = "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";
-    const gistId = "d78a1e78da9b36283bb9de022cedcb93.js";
-    fetch(`https://api.github.com/gists/${gistId}`, {
-      method: "PATCH",
-      headers: {
-        "Authorization": `token ${accessToken}`,
-        "Content-Type": "application/json"
-      },
       body: JSON.stringify({
         files: {
           "responses.json": {
