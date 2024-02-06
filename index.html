@@ -88,23 +88,11 @@
   </div>
 </div>
 <script>
-  // Define a more sophisticated set of responses with emotions
+  // Define a more sophisticated set of responses
   const responses = {
-    "hi|hello|hey": {
-      positive: ["Hello!", "Hi there!", "Hey! How can I assist you?"],
-      neutral: ["Hello!", "Hi there!"],
-      negative: ["Ugh, another greeting...", "What do you want?", "Hello, I guess."]
-    },
-    "how are you\\?": {
-      positive: ["I'm doing well, thank you!", "Feeling great, thanks for asking!", "All good here!"],
-      neutral: ["I'm fine, thank you.", "Doing okay, thanks."],
-      negative: ["I've had better days...", "Not feeling great, but I'll manage.", "Could be better."]
-    },
-    "bye|goodbye": {
-      positive: ["Goodbye!", "See you later!", "Take care!"],
-      neutral: ["Goodbye.", "Bye."],
-      negative: ["Oh, leaving already?", "Good riddance!", "Whatever, goodbye."]
-    },
+    "hi|hello|hey": ["Hello!", "Hi there!", "Hey! How can I assist you?"],
+    "how are you\\?": ["I'm doing well, thank you!", "Feeling great, thanks for asking!", "All good here!"],
+    "bye|goodbye": ["Goodbye!", "See you later!", "Take care!"],
     "what is your name\\?": ["I'm just a simple chatbot!", "I'm your friendly chatbot assistant!"],
     "what time is it\\?": ["It's currently " + new Date().toLocaleTimeString() + ".", "The time is " + new Date().toLocaleTimeString() + ".", "It is " + new Date().toLocaleTimeString() + "."],
     "tell me a joke": ["Why don't scientists trust atoms? Because they make up everything!", "I'm reading a book on anti-gravity. It's impossible to put down!", "What do you call fake spaghetti? An impasta!"],
@@ -123,26 +111,20 @@
     // Add more responses here...
   };
 
-  // Function to generate a random response with emotion
-  function getRandomResponseWithEmotion(emotion) {
-    const responseSet = responses[emotion];
-    if (!responseSet) return "I'm sorry, I don't understand that.";
-    if (Array.isArray(responseSet)) return getRandomResponse(responseSet);
-    return getRandomResponse(responseSet[emotion]);
-  }
-
-  // Function to generate bot response with emotion based on user input
-  function getBotResponseWithEmotion(message) {
-    message = message.toLowerCase().trim();
-    if (message.match(/\b(hi|hello|hey)\b/)) return getRandomResponseWithEmotion("positive");
-    if (message.includes("thank")) return getRandomResponseWithEmotion("positive");
-    if (message.includes("bye")) return getRandomResponseWithEmotion("negative");
-    return getRandomResponseWithEmotion("neutral");
-  }
-
   // Function to generate a random response from an array
   function getRandomResponse(array) {
     return array[Math.floor(Math.random() * array.length)];
+  }
+
+  // Function to generate bot response
+  function getBotResponse(message) {
+    message = message.toLowerCase().trim();
+    for (const [pattern, responsesArray] of Object.entries(responses)) {
+      if (new RegExp(pattern).test(message)) {
+        return getRandomResponse(responsesArray);
+      }
+    }
+    return "I'm sorry, I don't understand that.";
   }
 
   // Function to append user and bot messages to chatbox
@@ -166,7 +148,7 @@
     const message = inputField.value.trim();
     if (message !== "") {
       appendMessage("You", message, true);
-      const botResponse = getBotResponseWithEmotion(message);
+      const botResponse = getBotResponse(message);
       appendMessage("Bot", botResponse, false);
       inputField.value = "";
     }
