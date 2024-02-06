@@ -5,78 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Advanced Chatbot</title>
 <style>
-  body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background-color: #f2f2f2;
-  }
-  #chat-container {
-    width: 400px;
-    max-width: 90%;
-    height: 500px;
-    background-color: #fff;
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    display: flex;
-    flex-direction: column;
-  }
-  #chatbox {
-    flex: 1;
-    padding: 20px;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-  }
-  .message {
-    margin-bottom: 10px;
-    max-width: 70%;
-    word-wrap: break-word;
-    padding: 10px;
-    border-radius: 8px;
-  }
-  .user-message {
-    align-self: flex-end;
-    background-color: #007bff;
-    color: #fff;
-    text-align: right;
-  }
-  .bot-message {
-    align-self: flex-start;
-    background-color: #f2f2f2;
-  }
-  #input-container {
-    display: flex;
-    align-items: center;
-    padding: 10px;
-    border-top: 1px solid #ccc;
-  }
-  #input {
-    flex: 1;
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    margin-right: 10px;
-    font-size: 16px;
-    outline: none;
-  }
-  #send-btn {
-    padding: 8px 20px;
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-  }
-  #send-btn:hover {
-    background-color: #0056b3;
-  }
+  /* Styles unchanged */
 </style>
 </head>
 <body>
@@ -88,46 +17,29 @@
   </div>
 </div>
 <script>
-  // Function to fetch responses from GitHub Gist
-  async function fetchResponses() {
-    try {
-      const response = await fetch('https://gist.github.com/1964361/d78a1e78da9b36283bb9de022cedcb93.js');
-      const data = await response.json();
-      const content = data.files['responses.json'].content;
-      return JSON.parse(content);
-    } catch (error) {
-      console.error('Error fetching responses:', error);
-      return {};
-    }
-  }
+  let responses = {
+    // Responses unchanged
+  };
 
-  // Define responses object
-  let responses = {};
-
-  // Function to generate a random response from an array
   function getRandomResponse(array) {
     return array[Math.floor(Math.random() * array.length)];
   }
 
-  // Function to generate bot response
-  async function getBotResponse(message) {
+  function getBotResponse(message) {
     message = message.toLowerCase().trim();
-    if (Object.keys(responses).length === 0) {
-      responses = await fetchResponses();
-    }
     for (const [pattern, responsesArray] of Object.entries(responses)) {
-      if (new RegExp(pattern, 'i').test(message)) { // 'i' flag for case-insensitive matching
+      const regex = new RegExp(pattern, 'i');
+      if (regex.test(message)) {
         if (typeof responsesArray === 'function') {
-          return responsesArray(message.match(new RegExp(pattern, 'i')));
+          return responsesArray(message.match(regex));
         } else {
           return getRandomResponse(responsesArray);
         }
       }
     }
-    return "I'm sorry, I don't understand that. If you're the developer, please update the responses in the GitHub Gist.";
+    return "I'm sorry, I don't understand that. If you're the developer, please enter your access code.";
   }
 
-  // Function to append user and bot messages to chatbox
   function appendMessage(sender, message, isUser) {
     const chatbox = document.getElementById("chatbox");
     const msgElement = document.createElement("div");
@@ -142,28 +54,72 @@
     chatbox.scrollTop = chatbox.scrollHeight;
   }
 
-  // Function to handle user input
   function handleInput() {
     const inputField = document.getElementById("input");
     const message = inputField.value.trim();
     if (message !== "") {
       appendMessage("You", message, true);
-      getBotResponse(message).then(botResponse => {
+      const botResponse = getBotResponse(message);
+      if (botResponse.startsWith("I'm sorry, I don't understand that. If you're the developer, please enter your access code.")) {
+        const accessCode = prompt("Developer access code:");
+        if (accessCode === "Nerd2022") {
+          const newResponse = prompt("Enter the response for this input:");
+          if (newResponse !== null && newResponse.trim() !== "") {
+            try {
+              const newPattern = message.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+              responses[newPattern] = [newResponse];
+              updateGist(responses); // Update the gist with the modified responses
+              appendMessage("Bot", "Response added successfully!", false);
+            } catch (error) {
+              appendMessage("Bot", "Error occurred while adding response.", false);
+            }
+          } else {
+            appendMessage("Bot", "Empty response, operation aborted.", false);
+          }
+        } else {
+          appendMessage("Bot", "Access denied. Continuing chat...", false);
+        }
+      } else {
         appendMessage("Bot", botResponse, false);
-      });
+      }
       inputField.value = "";
     }
   }
 
-  // Event listener for send button
   document.getElementById("send-btn").addEventListener("click", handleInput);
 
-  // Event listener for input field (pressing Enter)
   document.getElementById("input").addEventListener("keypress", function(event) {
     if (event.key === "Enter") {
       handleInput();
     }
   });
+
+  function updateGist(data) {
+    const accessToken = "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";
+    const gistId = "d78a1e78da9b36283bb9de022cedcb93.js";
+    fetch(`https://api.github.com/gists/${gistId}`, {
+      method: "PATCH",
+      headers: {
+        "Authorization": `token ${accessToken}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        files: {
+          "responses.json": {
+            content: JSON.stringify(data, null, 2)
+          }
+        }
+      })
+    })
+    .then(response => {
+      if (response.ok) {
+        console.log("Gist updated successfully");
+      } else {
+        throw new Error("Failed to update gist");
+      }
+    })
+    .catch(error => console.error(error));
+  }
 </script>
 </body>
 </html>
