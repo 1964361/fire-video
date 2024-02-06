@@ -4,79 +4,88 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Video Platform</title>
-    <style>
-        /* CSS styles go here */
-        /* You would need to add styles for layout, responsiveness, and design */
-    </style>
+    <link rel="stylesheet" href="styles.css"> <!-- External CSS for styling -->
 </head>
 <body>
     <header>
-        <!-- Header section with logo, navigation, search bar, user authentication, etc. -->
         <div id="header-content">
             <div id="logo">My Video Platform</div>
-            <div id="search-bar">
-                <input type="text" placeholder="Search">
-                <button type="button">Search</button>
-            </div>
             <div id="user-auth">
-                <!-- User authentication options (login, signup, user profile) -->
+                <a href="login.html">Login</a>
+                <a href="signup.html">Sign Up</a>
             </div>
         </div>
     </header>
 
     <main>
-        <!-- Video player -->
-        <div id="video-player">
-            <video controls>
-                <source src="video.mp4" type="video/mp4">
-                Your browser does not support the video tag.
-            </video>
-        </div>
-
-        <!-- Video details, comments, likes -->
-        <div id="video-details">
-            <h2>Video Title</h2>
-            <p>Description of the video</p>
-            <div id="video-actions">
-                <!-- Like, dislike, share buttons -->
-                <button id="like-button">Like</button>
-                <button id="dislike-button">Dislike</button>
-                <button id="share-button">Share</button>
+        <section id="video-section">
+            <!-- Video Player -->
+            <div id="video-player">
+                <video id="main-video" controls>
+                    <source src="sample.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
             </div>
-            <!-- Comments section -->
-            <div id="comments">
-                <h3>Comments</h3>
-                <ul>
-                    <li>User1: Comment 1</li>
-                    <li>User2: Comment 2</li>
-                    <!-- More comments go here -->
-                </ul>
-                <!-- Comment form -->
-                <form id="comment-form">
-                    <textarea id="comment-text" placeholder="Add a comment"></textarea>
-                    <button type="submit">Post Comment</button>
+
+            <!-- Video Upload Form (Visible to Logged-in Users) -->
+            <div id="upload-form">
+                <h2>Upload Video</h2>
+                <form id="video-upload-form" action="upload.php" method="post" enctype="multipart/form-data">
+                    <input type="file" name="video-file" accept="video/mp4">
+                    <input type="text" name="title" placeholder="Title">
+                    <textarea name="description" placeholder="Description"></textarea>
+                    <button type="submit">Upload</button>
                 </form>
             </div>
-        </div>
+        </section>
 
-        <!-- Related videos -->
-        <div id="related-videos">
-            <h3>Related Videos</h3>
-            <ul>
-                <li><a href="#">Related Video 1</a></li>
-                <li><a href="#">Related Video 2</a></li>
-                <!-- More related videos go here -->
-            </ul>
-        </div>
+        <!-- Display Real Videos (Fetched from Database) -->
+        <section id="real-videos">
+            <h2>Real Videos</h2>
+            <div class="video-list">
+                <!-- Video Thumbnails and Information -->
+                <!-- PHP or other server-side scripting to fetch and display videos dynamically -->
+                <div class="video-thumbnail">
+                    <video class="thumbnail" controls>
+                        <source src="video1.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                    <div class="video-info">
+                        <h3>Title of Video 1</h3>
+                        <p>Description of Video 1</p>
+                    </div>
+                </div>
+                <div class="video-thumbnail">
+                    <video class="thumbnail" controls>
+                        <source src="video2.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                    <div class="video-info">
+                        <h3>Title of Video 2</h3>
+                        <p>Description of Video 2</p>
+                    </div>
+                </div>
+                <!-- More videos go here -->
+            </div>
+        </section>
     </main>
 
     <footer>
-        <!-- Footer section with links, about, contact, etc. -->
+        <div id="footer-content">
+            <nav>
+                <ul>
+                    <li><a href="#">About</a></li>
+                    <li><a href="#">Contact</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Terms of Service</a></li>
+                </ul>
+            </nav>
+            <div id="copyright">
+                &copy; 2024 My Video Platform
+            </div>
+        </div>
     </footer>
 
-    <script>
-        // JavaScript code for interactivity goes here
-        // You would need to add JavaScript for features like commenting, liking, sharing, searching, etc.
-    </script>
+    <script src="scripts.js"></script> <!-- External JavaScript for interactivity -->
 </body>
 </html>
