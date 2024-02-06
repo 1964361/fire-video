@@ -120,7 +120,7 @@
   function getBotResponse(message) {
     message = message.toLowerCase().trim();
     for (const [pattern, responsesArray] of Object.entries(responses)) {
-      if (new RegExp(pattern).test(message)) {
+      if (new RegExp(pattern, 'i').test(message)) { // 'i' flag for case-insensitive matching
         return getRandomResponse(responsesArray);
       }
     }
